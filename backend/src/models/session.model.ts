@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { SessionStatus, Topic } from "../utils/enum.js";
+import { QuestionStatus, SessionStatus, Topic } from "../utils/enum.js";
 
 const sessionSchema = new mongoose.Schema(
   {
@@ -7,7 +7,6 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       unique: true,
       required: true,
-      index: true,
     },
 
     status: {
@@ -27,6 +26,12 @@ const sessionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Question",
       default: null,
+    },
+
+    questionStatus: {
+      type: String,
+      enum: Object.values(QuestionStatus),
+      default: QuestionStatus.IDLE,
     },
 
     players: [
@@ -50,7 +55,5 @@ const sessionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-sessionSchema.index({ code: 1 });
 
 export default mongoose.model("Session", sessionSchema);

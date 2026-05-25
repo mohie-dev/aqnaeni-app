@@ -1,7 +1,7 @@
 import Session from "../models/session.model.js";
 import Question from "../models/question.model.js";
 import Vote from "../models/vote.model.js";
-import mongoose from "mongoose";
+import { toObjectId } from "../utils/helpers.js";
 import { PlayerDecision } from "../utils/enum.js";
 import { PopulatedVote } from "../utils/types.js";
 
@@ -38,7 +38,6 @@ export const getPreviewQuestion = async (
 
     return question[0];
 };
-
 
 // Accept a question for the session, updating the session's current question and used questions list
 export const acceptQuestion = async (
@@ -89,68 +88,66 @@ export const skipQuestion = async (questionId: string) => {
     };
 };
 
-// Calculate the results for a specific question in a session
+// Calculate results for a question in a session, returning counts of agree/disagree and individual votes
 export const calculateResults = async (
     sessionId: string,
     questionId: string
 ) => {
+
     const votes = await Vote.find({
         sessionId,
         questionId,
     })
         .populate("playerId", "name")
-        .lean<PopulatedVote[]>();
+        .lean();
 
     let agree = 0;
     let disagree = 0;
 
     for (const vote of votes) {
-        if (vote.value === PlayerDecision.AGREE) agree++;
-        else if (vote.value === PlayerDecision.DISAGREE) disagree++;
+        if (vote.value === PlayerDecision.AGREE) {
+            agree++;
+        } else {
+            disagree++;
+        }
     }
-
-    const detailedVotes = votes.map((vote) => ({
-        playerName: vote.playerId.name,
-        vote: vote.value,
-    }));
 
     return {
         agree,
         disagree,
-        votes: detailedVotes,
+        votes: votes.map((vote: any) => ({
+            playerName: vote.playerId.name,
+            vote: vote.value,
+        })),
     };
 };
 
-// Pick the opposite defender based on the votes for a question in a session
-export const pickOppositeDefender = (votes: any[]) => {
+// Pick a random player from the votes who voted opposite to the majority 
+// and assign them as the defender for the next round
+export const pickOppositeDefender = (
+    votes: any[]
+) => {
+
     if (!votes.length) {
         return null;
     }
 
-    // Randomly select a vote from the votes array
     const randomIndex = Math.floor(
         Math.random() * votes.length
     );
 
     const selectedVote = votes[randomIndex];
 
-    // Determine the opposite side for the selected vote
-    let defendSide = "";
-
-    if (selectedVote.value === PlayerDecision.AGREE) {
-        defendSide = PlayerDecision.DISAGREE;
-    } else if (selectedVote.value === PlayerDecision.DISAGREE) {
-        defendSide = PlayerDecision.AGREE;
-    } else {
-        defendSide = PlayerDecision.AGREE; // أو random later
-    }
+    const mustDefend =
+        selectedVote.value === PlayerDecision.AGREE
+            ? PlayerDecision.DISAGREE
+            : PlayerDecision.AGREE;
 
     return {
-        player: selectedVote.playerId,
+        player: selectedVote.playerId.name,
+
         originalVote: selectedVote.value,
-        mustDefend: defendSide,
+
+        mustDefend,
     };
 };
-
-// Helper function to convert string ID to ObjectId
-const toObjectId = (id: string) => new mongoose.Types.ObjectId(id);

@@ -22,7 +22,13 @@ export enum Mood {
 export enum PlayerDecision {
     AGREE = "agree",
     DISAGREE = "disagree",
-    NEUTRAL = "neutral"
+}
+
+export enum  QuestionStatus {
+    IDLE = "idle",
+    PENDING = "pending",
+    APPROVED = "approved",
+    REJECTED = "rejected"
 }
 
 export interface Vote {
