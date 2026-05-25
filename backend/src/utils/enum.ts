@@ -24,3 +24,8 @@ export enum PlayerDecision {
     DISAGREE = "disagree",
     NEUTRAL = "neutral"
 }
+
+export interface Vote {
+    playerId: string;
+    value: PlayerDecision;
+}
