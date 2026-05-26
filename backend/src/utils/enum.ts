@@ -5,7 +5,7 @@ export enum SessionStatus {
 
 export enum Topic {
     DEBATE = "debate",
-    FUNNY = "funny",
+    TRENDY = "trendy",
     DEEP = "deep",
     RELATIONSHIPS = "relationships",
     GYM = "gym",

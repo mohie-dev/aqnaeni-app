@@ -52,7 +52,8 @@ export const getQuestions = async (req: Request, res: Response) => {
   try {
     const { topic } = req.query;
 
-    const filter: any = {};
+
+    const filter: any = {  };
 
     if (topic) {
       filter.topic = topic;
@@ -75,7 +76,6 @@ export const getQuestions = async (req: Request, res: Response) => {
 // Get a random question preview for a session based on the session's topic and used questions
 export const getNextQuestion = async (req: Request, res: Response) => {
   const { sessionId } = req.params;
-  console.log("Session ID:", sessionId);
 
   const session = await Session.findById({ _id: sessionId });
 
@@ -84,11 +84,13 @@ export const getNextQuestion = async (req: Request, res: Response) => {
   }
 
   // Fetch a random question that matches the session's topic and hasn't been used in the session
+  // Questions Should Be In The Same Topic As The Session, Active, And Not In The Used Questions List For The Session
   const question = await Question.aggregate([
     {
       $match: {
         _id: { $nin: session.usedQuestions },
         isActive: true,
+        topic: session.topic,
       },
     },
     { $sample: { size: 1 } },

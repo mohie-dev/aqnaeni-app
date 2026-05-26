@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: "Cairo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #07090f;
+  color: #f7f6f1;
+}
+
+html, body, #root {
+  min-height: 100%;
+  background: radial-gradient(circle at top right, rgba(216, 162, 76, 0.12), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(127, 108, 237, 0.14), transparent 24%),
+    #07090f;
+}
+
+body {
+  margin: 0;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(216, 162, 76, 0.18);
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-soft;
+  }
+}
