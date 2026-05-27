@@ -59,7 +59,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { adminSecret } = useParams<{ adminSecret?: string }>();
-  const expectedSecret = import.meta.env.VITE_ADMIN_SECRET || "aqnaeni-secret";
+  const expectedSecret = "aqnaeni-secret";
 
   if (adminSecret !== expectedSecret) {
     return <Navigate to="/" replace />;
