@@ -28,8 +28,8 @@ export default function QuestionApprovalPage() {
       <div className="glass-panel p-8">
         <div className="space-y-4">
           <p className="text-xs uppercase tracking-[0.32em] text-white/50">سؤال للمراجعة</p>
-          <h1 className="text-3xl font-semibold text-white">هل هذا سؤال يستحق النقاش؟</h1>
-          <p className="text-sm leading-7 text-white/70">
+          <h1 className="text-xl font-semibold text-white">هل هذا سؤال يستحق النقاش؟</h1>
+          <p className="text-xs leading-7 text-white/70">
             اقرأ السؤال مع المجموعة. إذا كان جيدًا، تابع للتصويت. إذا أردتم سؤالًا أكثر حدة، اختر تخطي.
           </p>
         </div>
@@ -37,7 +37,7 @@ export default function QuestionApprovalPage() {
           {currentQuestion ? (
             <>
               <p className="text-sm uppercase tracking-[0.3em] text-white/40">السؤال الحالي</p>
-              <p className="mt-4 text-2xl font-semibold leading-tight text-white">{currentQuestion.content}</p>
+              <p className="mt-4 text-l font-semibold leading-tight text-white">{currentQuestion.content}</p>
             </>
           ) : (
             <p className="text-sm text-white/60">جارٍ جلب سؤال جديد...</p>

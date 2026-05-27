@@ -55,9 +55,6 @@ export default function LandingPage() {
               <Link to="/create">
                 <Button className="w-full sm:w-auto">ابدأ جلسة جديدة</Button>
               </Link>
-              <Link to="/admin" className="text-sm text-white/70 transition hover:text-white">
-                ادخل لوحة الأسئلة الداخلية
-              </Link>
             </div>
           </div>
           <div className="rounded-[32px] border border-white/10 bg-surfaceCold/80 p-6 shadow-soft">

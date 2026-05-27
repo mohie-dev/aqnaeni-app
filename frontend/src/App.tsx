@@ -1,4 +1,4 @@
-import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { SessionProvider, useSession } from "./lib/session-context";
 import LandingPage from "./pages/LandingPage";
 import CreateSessionPage from "./pages/CreateSessionPage";
@@ -22,15 +22,12 @@ function Layout({ children }: { children: React.ReactNode }) {
           <Link to="/" className="text-lg font-semibold tracking-tight text-white">
             اقنعني
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {location.pathname !== "/" ? (
               <Link to="/" className="text-sm text-white/70 transition hover:text-white">
                 العودة للرئيسية
               </Link>
             ) : null}
-            <Link to="/admin" className="text-sm text-white/70 transition hover:text-white">
-              لوحة الأسئلة
-            </Link>
             {session ? (
               <Button type="button" variant="secondary" onClick={resetFlow} className="hidden sm:inline-flex">
                 إنهاء الجلسة
@@ -58,6 +55,17 @@ function Layout({ children }: { children: React.ReactNode }) {
       </main>
     </div>
   );
+}
+
+function AdminGuard({ children }: { children: React.ReactNode }) {
+  const { adminSecret } = useParams<{ adminSecret?: string }>();
+  const expectedSecret = import.meta.env.VITE_ADMIN_SECRET || "aqnaeni-secret";
+
+  if (adminSecret !== expectedSecret) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 }
 
 function AppRoutes() {
@@ -91,7 +99,14 @@ function AppRoutes() {
         path="/defender"
         element={session ? <DefenderRevealPage /> : <Navigate to="/create" replace />}
       />
-      <Route path="/admin" element={<AdminQuestionsPage />} />
+      <Route
+        path="/admin/:adminSecret"
+        element={
+          <AdminGuard>
+            <AdminQuestionsPage />
+          </AdminGuard>
+        }
+      />
       <Route path="*" element={<div className="glass-panel p-10 text-center text-white">أوه! الصفحة اختفت — حاول العودة للرئيسية</div>} />
     </Routes>
   );

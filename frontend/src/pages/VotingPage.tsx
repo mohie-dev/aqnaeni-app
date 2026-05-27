@@ -42,15 +42,15 @@ export default function VotingPage() {
       <div className="glass-panel p-8">
         <div className="space-y-4">
           <p className="text-xs uppercase tracking-[0.32em] text-white/50">التصويت الجماعي</p>
-          <h1 className="text-3xl font-semibold text-white">صوت لكل لاعب في المجموعة</h1>
-          <p className="text-sm leading-7 text-white/70">
+          <h1 className="text-xl font-semibold text-white">صوت لكل لاعب في المجموعة</h1>
+          <p className="text-xs leading-7 text-white/70">
             اختر اللاعب ثم سجّل رأيه في السؤال. يمكنك تحويل الجلسة من نقاش هادئ إلى حماس سريع.
           </p>
         </div>
 
         <div className="mt-8 rounded-[32px] border border-white/10 bg-surfaceCold/80 p-8">
           <p className="text-sm uppercase tracking-[0.3em] text-white/40">السؤال</p>
-          <p className="mt-4 text-xl font-semibold text-white">{currentQuestion?.content ?? "جارٍ تحميل السؤال..."}</p>
+          <p className="mt-4 text-l font-semibold text-white">{currentQuestion?.content ?? "جارٍ تحميل السؤال..."}</p>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-[1fr_1.4fr]">
@@ -83,7 +83,7 @@ export default function VotingPage() {
                 >
                   <div className="flex items-center justify-between">
                     <span>{player.name}</span>
-                    <span className="text-xs text-white/50">{votes[player._id] ? votes[player._id] : "لم يدلِ بصوته بعد"}</span>
+                    <span className="text-xs text-white/50">{votes[player._id] ? votes[player._id] : "مخترش"}</span>
                   </div>
                 </button>
               ))}

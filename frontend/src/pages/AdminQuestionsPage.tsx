@@ -46,26 +46,7 @@ export default function AdminQuestionsPage() {
         title="لوحة التحكم السريعة لأسئلة النقاش"
         description="أضف أسئلة جديدة وراجع المجموعة الحالية من الأسئلة التي يمكن أن تظهر في الجلسة." 
       />
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="glass-panel p-8">
-          <h2 className="text-xl font-semibold text-white">قائمة الأسئلة الحالية</h2>
-          <div className="mt-6 space-y-3">
-            {questions.length ? (
-              questions.map((question) => (
-                <div key={question._id} className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
-                  <div className="flex items-center justify-between gap-3">
-                    <p>{question.content}</p>
-                    <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/60">{question.topic}</span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-6 text-sm text-white/60">
-                لا يوجد أسئلة بعد.
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="mt-8 space-y-8">
         <div className="glass-panel p-8">
           <h2 className="text-xl font-semibold text-white">إضافة سؤال جديد</h2>
           <form onSubmit={handleCreate} className="mt-6 space-y-5">
@@ -93,6 +74,26 @@ export default function AdminQuestionsPage() {
             <Button type="submit">حفظ السؤال</Button>
             {message ? <p className="text-sm text-white/70">{message}</p> : null}
           </form>
+        </div>
+
+        <div className="glass-panel p-8">
+          <h2 className="text-xl font-semibold text-white">قائمة الأسئلة الحالية</h2>
+          <div className="mt-6 space-y-3">
+            {questions.length ? (
+              questions.map((question) => (
+                <div key={question._id} className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p>{question.content}</p>
+                    <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/60">{question.topic}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-6 text-sm text-white/60">
+                لا يوجد أسئلة بعد.
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
