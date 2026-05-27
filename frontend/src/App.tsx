@@ -46,7 +46,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       {loading ? (
         <div className="pointer-events-none absolute inset-x-0 top-20 z-40 mx-auto flex max-w-6xl justify-center px-4 sm:px-6">
           <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur-xl">
-            جاري الاتصال بالخادم... أحضر فنجان قهوة إذا تأخرنا ☕
+            جاري الاتصال بالخادم... أحضر فنجان قهوة إذا تأخرنا 
           </div>
         </div>
       ) : null}
