@@ -9,7 +9,7 @@ import type {
   VoteValue,
 } from "./types";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = "https://aqnaeni-app.onrender.com/api";
 
 const handleResponse = async <T>(response: Response): Promise<T> => {
   const text = await response.text();
