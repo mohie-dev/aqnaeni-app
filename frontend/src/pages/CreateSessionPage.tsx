@@ -13,7 +13,7 @@ const topics: Array<{ value: Topic; label: string }> = [
 ];
 
 export default function CreateSessionPage() {
-  const [topic, setTopic] = useState<Topic>("random");
+  const [topic, setTopic] = useState<Topic>("deep");
   const [submitted, setSubmitted] = useState(false);
   const { createSession, loading, error, session } = useSession();
   const navigate = useNavigate();
