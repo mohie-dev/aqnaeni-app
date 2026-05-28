@@ -11,7 +11,7 @@ const router = express.Router();
 // POST /api/questions - Create a new question
 router.post("/", createQuestion);
 
-// GET /api/questions - Retrieve all questions
+// GET /api/questions?topic=:topic - Retrieve all questions with optional topic filtering
 router.get("/", getQuestions);
 
 // PUT /api/questions/:id - Update a question

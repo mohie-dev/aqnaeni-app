@@ -53,10 +53,10 @@ export const getQuestions = async (req: Request, res: Response) => {
     const { topic } = req.query;
 
 
-    const filter: any = {};
+    const filter: { topic?: Topic } = {};
 
     if (topic) {
-      filter.topic = topic;
+      filter.topic = topic as Topic;
     }
 
     const questions = await Question.find(filter);

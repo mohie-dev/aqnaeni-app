@@ -17,16 +17,26 @@ export default function AdminQuestionsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [content, setContent] = useState("");
   const [topic, setTopic] = useState<Topic>("random");
+  const [filterTopic, setFilterTopic] = useState<"all" | Topic>("all");
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [editTopic, setEditTopic] = useState<Topic>("random");
   const [message, setMessage] = useState<string | null>(null);
 
+  const loadQuestions = async (topicFilter: "all" | Topic = filterTopic) => {
+    setMessage(null);
+
+    try {
+      const questions = await getQuestions(topicFilter === "all" ? undefined : topicFilter);
+      setQuestions(questions);
+    } catch {
+      setMessage("فشل تحميل الأسئلة");
+    }
+  };
+
   useEffect(() => {
-    getQuestions()
-      .then(setQuestions)
-      .catch(() => setMessage("فشل تحميل الأسئلة"));
-  }, []);
+    loadQuestions();
+  }, [filterTopic]);
 
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,7 +44,11 @@ export default function AdminQuestionsPage() {
 
     try {
       const question = await createQuestion({ content, topic, mood: "medium" });
-      setQuestions((current) => [question, ...current]);
+
+      if (filterTopic === "all" || filterTopic === question.topic) {
+        setQuestions((current) => [question, ...current]);
+      }
+
       setContent("");
       setMessage("تم إنشاء السؤال بنجاح.");
     } catch {
@@ -133,7 +147,27 @@ export default function AdminQuestionsPage() {
         </div>
 
         <div className="glass-panel p-8">
-          <h2 className="text-xl font-semibold text-white">قائمة الأسئلة الحالية</h2>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-white">قائمة الأسئلة الحالية</h2>
+              <p className="text-sm text-white/70">فلتر الأسئلة حسب الموضوع للعرض السريع.</p>
+            </div>
+            <div className="max-w-sm">
+              <label className="mb-2 block text-sm font-medium text-white/80">عرض حسب الموضوع</label>
+              <select
+                value={filterTopic}
+                onChange={(event) => setFilterTopic(event.target.value as "all" | Topic)}
+                className="w-full rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+              >
+                <option value="all" className="bg-surface">الكل</option>
+                {topics.map((option) => (
+                  <option key={option.value} value={option.value} className="bg-surface">
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div className="mt-6 space-y-3">
             {questions.length ? (
               questions.map((question) => (

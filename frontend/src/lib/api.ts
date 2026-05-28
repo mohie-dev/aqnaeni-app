@@ -106,8 +106,9 @@ export const getDefender = async (sessionId: string, questionId: string) => {
   return handleResponse<DefenderData>(response);
 };
 
-export const getQuestions = async () => {
-  const response = await fetch(`${API_BASE}/questions`);
+export const getQuestions = async (topic?: Topic) => {
+  const query = topic ? `?topic=${encodeURIComponent(topic)}` : "";
+  const response = await fetch(`${API_BASE}/questions${query}`);
   return handleResponse<Question[]>(response);
 };
 

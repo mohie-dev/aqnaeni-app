@@ -6,12 +6,10 @@ import { useSession } from "../lib/session-context";
 import type { Topic } from "../lib/types";
 
 const topics: Array<{ value: Topic; label: string }> = [
-  { value: "random", label: "أسئلة متنوعة" },
-  { value: "debate", label: "جدل" },
-  { value: "trendy", label: "تريند" },
   { value: "relationships", label: "علاقات" },
   { value: "deep", label: "أسئلة عميقة" },
-  { value: "gym", label: "نمط حياة" },
+  { value: "gym", label: "ELGYM" },
+  { value: "trendy", label: "تريند" },
 ];
 
 export default function CreateSessionPage() {
