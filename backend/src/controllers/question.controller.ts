@@ -53,7 +53,7 @@ export const getQuestions = async (req: Request, res: Response) => {
     const { topic } = req.query;
 
 
-    const filter: any = {  };
+    const filter: any = {};
 
     if (topic) {
       filter.topic = topic;
@@ -113,3 +113,59 @@ export const getNextQuestion = async (req: Request, res: Response) => {
   });
 };
 
+// Update the content, topic, or mood of an existing question by its ID
+export const updateQuestion = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { content, topic, mood } = req.body;
+
+    const question = await Question.findByIdAndUpdate(
+      id,
+      { content, topic, mood },
+      { new: true }
+    );
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: "Question not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: question,
+    });
+  } catch (err: any) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+
+// Delete a question by its ID
+export const deleteQuestion = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const question = await Question.findByIdAndDelete(id);
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: "Question not found",
+      });
+    }
+    return res.json({
+      success: true,
+      message: "Question deleted",
+    });
+  }
+  catch (err: any) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

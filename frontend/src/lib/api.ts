@@ -119,3 +119,19 @@ export const createQuestion = async (question: QuestionFormData) => {
   });
   return handleResponse<Question>(response);
 };
+
+export const updateQuestion = async (id: string, question: QuestionFormData) => {
+  const response = await fetch(`${API_BASE}/questions/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(question),
+  });
+  return handleResponse<Question>(response);
+};
+
+export const deleteQuestion = async (id: string) => {
+  const response = await fetch(`${API_BASE}/questions/${id}`, {
+    method: "DELETE",
+  });
+  return handleResponse<{ message: string }>(response);
+};
