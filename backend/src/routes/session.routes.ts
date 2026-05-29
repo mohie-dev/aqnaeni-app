@@ -4,6 +4,7 @@ import {
     joinSession,
     getSession,
     hostDecision,
+    deletePlayer,
 } from "../controllers/session.controller.js";
 import { getNextQuestion } from "../controllers/question.controller.js";
 
@@ -14,6 +15,9 @@ router.post("/", createSession);
 
 // POST /api/sessions/:code/join - Join a session by code, creating a new player
 router.post("/:code/join", joinSession);
+
+// DELETE /api/sessions/:sessionId/:playerId - Remove a player from a session
+router.delete("/:sessionId/:playerId", deletePlayer);
 
 // GET /api/sessions/:code - Retrieve session details by code
 router.get("/:code", getSession);

@@ -10,6 +10,8 @@ import type {
 } from "./types";
 
 const API_BASE = "https://aqnaeni-app.onrender.com/api";
+// https://aqnaeni-app.onrender.com/api
+// http://localhost:3000/api
 
 const handleResponse = async <T>(response: Response): Promise<T> => {
   const text = await response.text();
@@ -79,6 +81,13 @@ export const hostDecision = async (sessionId: string, decision: "approve" | "rej
     body: JSON.stringify({ decision: decision === "approve" ? "approved" : "rejected" }),
   });
   return handleResponse<{ status: string }>(response);
+};
+
+export const deletePlayer = async (sessionId: string, playerId: string) => {
+  const response = await fetch(`${API_BASE}/sessions/${sessionId}/${playerId}`, {
+    method: "DELETE",
+  });
+  return handleResponse<{ message: string }>(response);
 };
 
 export const submitVote = async (

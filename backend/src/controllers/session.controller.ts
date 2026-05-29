@@ -67,6 +67,41 @@ export const joinSession = async (req: Request, res: Response) => {
     }
 };
 
+// Delete Player from session and remove from players list
+export const deletePlayer = async (req: Request, res: Response) => {
+    try {
+        const { sessionId, playerId } = req.params;
+
+        const session = await Session.findById(sessionId);
+        if (!session) {
+            return res.status(404).json({
+                message: "Session not found",
+            });
+        }
+        const player = await Player.findById(playerId);
+        if (!player) {
+            return res.status(404).json({
+                message: "Player not found",
+            });
+        }
+        await Player.findByIdAndDelete(playerId);
+        session.players = session.players.filter(
+            (id) => id.toString() !== playerId
+        );
+        await session.save();
+        return res.json({
+            success: true,
+            message: "Player removed from session",
+        });
+
+    } catch (err: any) {
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+};
+
 // Get session details by code, including the list of players and current question
 export const getSession = async (req: Request, res: Response) => {
     try {

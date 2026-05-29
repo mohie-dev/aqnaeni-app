@@ -6,7 +6,8 @@ import { useSession } from "../lib/session-context";
 export default function AddPlayersPage() {
   const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const { session, players, addPlayer, loading, error } = useSession();
+  const [removingPlayerId, setRemovingPlayerId] = useState<string | null>(null);
+  const { session, players, addPlayer, deletePlayer, loading, error } = useSession();
   const navigate = useNavigate();
 
   const handleAdd = async (event: FormEvent<HTMLFormElement>) => {
@@ -63,11 +64,32 @@ export default function AddPlayersPage() {
 
         <div className="mt-8 space-y-4">
           <p className="text-sm text-white/70">قائمة اللاعبين</p>
-          <div className="grid gap-2">
+          <div className="space-y-2">
             {players.length ? (
               players.map((player) => (
-                <div key={player._id} className="rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80">
-                  {player.name}
+                <div
+                  key={player._id}
+                  className="flex flex-row items-center gap-3 rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-white/80"
+                >
+                  <span className="flex-1">{player.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="flex-shrink-0"
+                    disabled={loading && removingPlayerId === player._id}
+                    onClick={async () => {
+                      setRemovingPlayerId(player._id);
+                      try {
+                        await deletePlayer(player._id);
+                      } catch {
+                        // error handled by context
+                      } finally {
+                        setRemovingPlayerId(null);
+                      }
+                    }}
+                  >
+                    {loading && removingPlayerId === player._id ? "جارٍ الحذف..." : "حذف"}
+                  </Button>
                 </div>
               ))
             ) : (

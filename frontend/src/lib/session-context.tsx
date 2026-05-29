@@ -22,6 +22,7 @@ interface SessionContextValue {
   createSession: (topic: Topic) => Promise<Session>;
   addPlayer: (name: string) => Promise<Player>;
   refreshSession: (code: string) => Promise<void>;
+  deletePlayer: (playerId: string) => Promise<void>;
   fetchQuestion: () => Promise<Question>;
   decideQuestion: (decision: "approve" | "reject") => Promise<{ status: string }>;
   submitVote: (playerId: string, value: VoteValue) => Promise<void>;
@@ -90,6 +91,24 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
       setSession(data);
       setPlayers(data.players ?? []);
       return;
+    } catch (err) {
+      setError((err as Error).message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePlayer = async (playerId: string) => {
+    if (!session) {
+      throw new Error("Session is not initialized.");
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      await api.deletePlayer(session._id, playerId);
+      setPlayers((current) => current.filter((player) => player._id !== playerId));
     } catch (err) {
       setError((err as Error).message);
       throw err;
@@ -222,6 +241,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     refreshSession,
     fetchQuestion,
     decideQuestion,
+    deletePlayer,
     submitVote,
     loadResults,
     loadDefender,
