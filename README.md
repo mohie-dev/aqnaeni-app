@@ -1,4 +1,4 @@
-# Aqnaeni
+# Aqnaeni (قنيني)
 
 Aqnaeni is an Arabic interactive game experience for group sessions where players create topics, add questions, approve challenges, and vote to uncover the defender. The application includes a React + Vite frontend and a Node.js + Express backend with MongoDB persistence.
 
