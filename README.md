@@ -29,7 +29,33 @@ Aqnaeni is an Arabic interactive game experience for group sessions where player
 - Node.js 18+ installed
 - MongoDB connection available (local or cloud)
 
-### Backend Setup
+### Quick Start (All-in-One Command)
+
+To quickly install all dependencies and start both the backend and frontend at once:
+
+1. **Install all dependencies** (run in the root directory):
+   ```bash
+   npm run install:all
+   ```
+
+2. **Start the application** in development mode:
+   - On Windows: double-click `start.bat` or run:
+     ```bash
+     npm run dev
+     ```
+   - On macOS/Linux: run:
+     ```bash
+     chmod +x start.sh
+     ./start.sh
+     ```
+     or:
+     ```bash
+     npm run dev
+     ```
+
+This will concurrently start the backend server and the frontend development server, displaying colored logs for each in a single terminal.
+
+### Manual Backend Setup
 
 1. Open a terminal and navigate to the backend folder:
 
