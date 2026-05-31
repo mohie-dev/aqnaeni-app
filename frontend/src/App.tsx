@@ -50,7 +50,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       ) : null}
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
+      <main className="mx-auto max-w-6xl px-4 pb-6 pt-4 sm:pb-16 sm:pt-6 sm:px-6">
         {children}
       </main>
     </div>

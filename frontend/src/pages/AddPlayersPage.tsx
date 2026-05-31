@@ -25,26 +25,28 @@ export default function AddPlayersPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <div className="glass-panel p-8">
-        <div className="space-y-4">
-          <p className="text-xs uppercase tracking-[0.32em] text-white/50">إضافة أصدقاء</p>
-          <h1 className="text-3xl font-semibold text-white">شارك الكود وجمع اللاعبين</h1>
-          <p className="text-sm leading-7 text-white/70">
+    <div className="mx-auto max-w-xl px-2 py-4 sm:px-6 sm:py-8">
+      <div className="glass-panel p-5 sm:p-8">
+        <div className="space-y-2">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-white/50">إضافة أصدقاء</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">شارك الكود وجمع اللاعبين</h1>
+          <p className="text-xs sm:text-sm leading-relaxed sm:leading-7 text-white/70">
             أدخل أسماء الأصدقاء واحدًا تلو الآخر، واقرأ الكود ليستخدمه الجميع عند الانضمام إلى الجلسة.
           </p>
         </div>
-        <div className="mt-8 rounded-[28px] border border-white/10 bg-surfaceCold/80 p-6">
-          <div className="flex flex-col gap-3 text-white/80 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-5 sm:mt-8 rounded-2xl border border-white/10 bg-surfaceCold/80 p-4 sm:p-6">
+          <div className="flex flex-row items-center justify-between gap-3 text-white/80">
             <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-white/40">رمز الجلسة</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{session?.code ?? "----"}</p>
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.24em] text-white/40">رمز الجلسة</p>
+              <p className="mt-1 text-xl sm:text-2xl font-bold text-white tracking-wider">{session?.code ?? "----"}</p>
             </div>
-            <p className="text-sm text-white/60">عدد اللاعبين: {players.length}</p>
+            <p className="text-xs sm:text-sm font-semibold bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 text-white/80">
+              اللاعبين: {players.length}
+            </p>
           </div>
         </div>
 
-        <form onSubmit={handleAdd} className="mt-8 grid gap-4 sm:grid-cols-[1fr_auto]">
+        <form onSubmit={handleAdd} className="mt-5 sm:mt-8 grid gap-2.5 sm:gap-4 grid-cols-[1fr_auto]">
           <label className="sr-only" htmlFor="player-name">
             اسم اللاعب
           </label>
@@ -53,29 +55,29 @@ export default function AddPlayersPage() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="اسم اللاعب"
-            className="w-full rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
           />
-          <Button type="submit" disabled={loading || submitted}>
-            {loading && submitted ? "جارٍ الإضافة..." : "إضافة لاعب"}
+          <Button type="submit" disabled={loading || submitted} className="py-3 text-xs sm:text-sm">
+            {loading && submitted ? "جاري الإضافة..." : "إضافة لاعب"}
           </Button>
         </form>
 
-        {error ? <p className="mt-3 text-sm text-rose-400">{error}</p> : null}
+        {error ? <p className="mt-3 text-xs sm:text-sm text-rose-400">{error}</p> : null}
 
-        <div className="mt-8 space-y-4">
-          <p className="text-sm text-white/70">قائمة اللاعبين</p>
-          <div className="space-y-2">
+        <div className="mt-5 sm:mt-8 space-y-3">
+          <p className="text-xs sm:text-sm font-semibold text-white/70">قائمة اللاعبين</p>
+          <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
             {players.length ? (
               players.map((player) => (
                 <div
                   key={player._id}
-                  className="flex flex-row items-center gap-3 rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-white/80"
+                  className="flex flex-row items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 sm:py-3 text-xs sm:text-sm text-white/80"
                 >
-                  <span className="flex-1">{player.name}</span>
+                  <span className="flex-1 font-medium">{player.name}</span>
                   <Button
                     type="button"
                     variant="ghost"
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 text-xs text-rose-400 hover:text-rose-300 py-1 px-3"
                     disabled={loading && removingPlayerId === player._id}
                     onClick={async () => {
                       setRemovingPlayerId(player._id);
@@ -88,24 +90,24 @@ export default function AddPlayersPage() {
                       }
                     }}
                   >
-                    {loading && removingPlayerId === player._id ? "جارٍ الحذف..." : "حذف"}
+                    {loading && removingPlayerId === player._id ? "جاري الحذف..." : "حذف"}
                   </Button>
                 </div>
               ))
             ) : (
-              <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 px-4 py-6 text-sm text-white/50">
-                لم يضف أحد نفسه بعد — ادعُ أصدقاءك!
+              <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 px-4 py-5 text-xs text-white/50 text-center">
+                لم ينضم أحد بعد — ادعُ أصدقاءك!
               </div>
             )}
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
-          <Button type="button" onClick={() => navigate("/waiting")} disabled={players.length < 2}>
+        <div className="mt-5 sm:mt-8 flex flex-col gap-2.5">
+          <Button type="button" onClick={() => navigate("/waiting")} disabled={players.length < 2} className="w-full py-3.5 text-sm font-bold">
             بدء الجلسة
           </Button>
-          <p className="text-sm text-white/60">
-            نحتاج لاعبين اثنين على الأقل — لا تكن اللاعب الوحيد.
+          <p className="text-[10px] sm:text-xs text-white/50 text-center leading-normal">
+            نحتاج لاعبين اثنين على الأقل لبدء اللعبة.
           </p>
         </div>
       </div>

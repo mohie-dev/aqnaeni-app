@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { useSession } from "../lib/session-context";
+import { CheckIcon, CrossIcon, HourglassIcon } from "../components/Icons";
 
 export default function VotingPage() {
   const { currentQuestion, players, votes, submitVote, error, loadResults } = useSession();
@@ -38,71 +39,109 @@ export default function VotingPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <div className="glass-panel p-8">
-        <div className="space-y-4">
-          <p className="text-xs uppercase tracking-[0.32em] text-white/50">التصويت الجماعي</p>
-          <h1 className="text-xl font-semibold text-white">صوت لكل لاعب في المجموعة</h1>
-          <p className="text-xs leading-7 text-white/70">
+    <div className="mx-auto max-w-xl px-2 py-4 sm:px-6 sm:py-8">
+      <div className="glass-panel p-5 sm:p-8">
+        <div className="space-y-2">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-white/50">التصويت الجماعي</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">صوت لكل لاعب في المجموعة</h1>
+          <p className="text-xs leading-relaxed text-white/70">
             اختر اللاعب ثم سجّل رأيه في السؤال. يمكنك تحويل الجلسة من نقاش هادئ إلى حماس سريع.
           </p>
         </div>
 
-        <div className="mt-8 rounded-[32px] border border-white/10 bg-surfaceCold/80 p-8">
-          <p className="text-sm uppercase tracking-[0.3em] text-white/40">السؤال</p>
-          <p className="mt-4 text-l font-semibold text-white">{currentQuestion?.content ?? "جارٍ تحميل السؤال..."}</p>
+        <div className="mt-5 sm:mt-8 rounded-2xl border border-white/10 bg-surfaceCold/80 p-4 sm:p-6">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-white/40">السؤال</p>
+          <p className="mt-2 text-sm sm:text-base font-semibold leading-relaxed text-white">{currentQuestion?.content ?? "جاري تحميل السؤال..."}</p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-[1fr_1.4fr]">
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
-            <p className="text-sm text-white/70">اللاعب الذي يصوت الآن</p>
-            <div className="mt-4 rounded-3xl bg-surface/95 px-4 py-5 text-lg font-semibold text-white">
-              {activePlayerId
-                ? players.find((player) => player._id === activePlayerId)?.name
-                : "جميع التصويتات مكتملة"}
+        <div className="mt-5 sm:mt-8 grid gap-4 grid-cols-1">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">اللاعب الذي يصوت الآن</p>
+              <p className="mt-1 text-base sm:text-lg font-bold text-brand">
+                {activePlayerId
+                  ? players.find((player) => player._id === activePlayerId)?.name
+                  : "جميع التصويتات مكتملة"}
+              </p>
             </div>
-            <div className="mt-6 space-y-3 text-sm text-white/70">
-              <p>مكتمل: {players.length - remainingPlayers.length}/{players.length}</p>
-              <p>متبقي: {remainingPlayers.length}</p>
-            </div>
-          </div>
-
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
-            <p className="text-sm text-white/70">قائمة اللاعبين</p>
-            <div className="mt-4 grid gap-2">
-              {players.map((player) => (
-                <button
-                  key={player._id}
-                  type="button"
-                  onClick={() => setActivePlayerId(player._id)}
-                  className={`w-full rounded-3xl px-4 py-3 text-left text-sm transition ${
-                    activePlayerId === player._id
-                      ? "border border-brand bg-brand/10 text-white"
-                      : "border border-white/10 bg-white/5 text-white/80 hover:border-white/20"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{player.name}</span>
-                    <span className="text-xs text-white/50">{votes[player._id] ? votes[player._id] : "مخترش"}</span>
-                  </div>
-                </button>
-              ))}
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">التقدم</p>
+              <p className="mt-1 text-xs sm:text-sm font-semibold text-white/80">
+                {players.length - remainingPlayers.length} من {players.length}
+              </p>
             </div>
           </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-xs font-semibold text-white/70 mb-3">حالة تصويت اللاعبين</p>
+            <div className="grid grid-cols-2 gap-2 max-h-[140px] overflow-y-auto pr-1">
+              {players.map((player) => {
+                const hasVoted = votes[player._id];
+                const isCurrent = activePlayerId === player._id;
+                
+                const voteBadge =
+                  hasVoted === "agree" ? (
+                    <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                      <CheckIcon className="w-3.5 h-3.5" /> موافق
+                    </span>
+                  ) : hasVoted === "disagree" ? (
+                    <span className="flex items-center gap-1 text-rose-400 font-semibold">
+                      <CrossIcon className="w-3.5 h-3.5" /> معارض
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-white/40 font-medium">
+                      <HourglassIcon className="w-3.5 h-3.5 text-white/30" /> لم يصوت
+                    </span>
+                  );
+
+                return (
+                  <button
+                    key={player._id}
+                    type="button"
+                    onClick={() => setActivePlayerId(player._id)}
+                    className={`w-full rounded-xl px-3 py-2 text-right transition-all duration-200 border ${
+                      isCurrent
+                        ? "border-brand bg-brand/10 text-white scale-[1.02] shadow-sm shadow-brand/5"
+                        : "border-white/5 bg-white/5 text-white/80 hover:border-white/10 hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="flex flex-row items-center justify-between gap-1 text-[11px] sm:text-xs">
+                      <span className="font-semibold truncate max-w-[80px]">{player.name}</span>
+                      <span className="text-[10px] whitespace-nowrap">{voteBadge}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <Button type="button" onClick={() => handleVote("agree")} disabled={!activePlayerId}>
-            موافق
-          </Button>
-          <Button type="button" variant="secondary" onClick={() => handleVote("disagree")} disabled={!activePlayerId}>
-            معارض
-          </Button>
-          <Button type="button" variant="ghost" onClick={handleSeeResults}>
-            عرض النتائج الآن
+        <div className="mt-5 sm:mt-8 space-y-2.5">
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              type="button"
+              onClick={() => handleVote("agree")}
+              disabled={!activePlayerId}
+              className="flex items-center justify-center gap-2 py-3 text-sm font-bold bg-emerald-500 hover:bg-emerald-600 text-white border-0"
+            >
+              <CheckIcon className="w-4 h-4" /> موافق
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => handleVote("disagree")}
+              disabled={!activePlayerId}
+              className="flex items-center justify-center gap-2 py-3 text-sm font-bold bg-rose-500 hover:bg-rose-600 text-white border-0 hover:bg-opacity-100"
+            >
+              <CrossIcon className="w-4 h-4" /> معارض
+            </Button>
+          </div>
+          
+          <Button type="button" variant="ghost" onClick={handleSeeResults} className="w-full py-2.5 text-xs text-white/50 hover:text-white transition">
+            تخطي وعرض النتائج الآن
           </Button>
         </div>
-        {error ? <p className="mt-4 text-sm text-rose-400">{error}</p> : null}
+        {error ? <p className="mt-4 text-xs sm:text-sm text-rose-400">{error}</p> : null}
       </div>
     </div>
   );

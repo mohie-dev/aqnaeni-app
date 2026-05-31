@@ -5,11 +5,13 @@ import SectionHeader from "../components/SectionHeader";
 import { useSession } from "../lib/session-context";
 import type { Topic } from "../lib/types";
 
-const topics: Array<{ value: Topic; label: string }> = [
-  { value: "relationships", label: "علاقات" },
-  { value: "deep", label: "أسئلة عميقة" },
-  { value: "gym", label: "ELGYM" },
-  { value: "trendy", label: "تريند" },
+import { UsersIcon, BrainIcon, DumbbellIcon, FlameIcon } from "../components/Icons";
+
+const topics: Array<{ value: Topic; label: string; icon: React.ReactNode; description: string }> = [
+  { value: "relationships", label: "علاقات", icon: <UsersIcon className="w-6 h-6 text-brand mb-1" />, description: "عن العلاقات والأصدقاء" },
+  { value: "deep", label: "أسئلة عميقة", icon: <BrainIcon className="w-6 h-6 text-brand mb-1" />, description: "أسئلة تكشف الشخصية" },
+  { value: "gym", label: "ELGYM", icon: <DumbbellIcon className="w-6 h-6 text-brand mb-1" />, description: "تحديات رياضية وحماسية" },
+  { value: "trendy", label: "تريند", icon: <FlameIcon className="w-6 h-6 text-brand mb-1" />, description: "مواضيع الساعة الرائجة" },
 ];
 
 export default function CreateSessionPage() {
@@ -34,40 +36,43 @@ export default function CreateSessionPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <div className="glass-panel p-8">
+    <div className="mx-auto max-w-xl px-2 py-4 sm:px-6 sm:py-8">
+      <div className="glass-panel p-5 sm:p-8">
         <SectionHeader
           eyebrow="ابدأ جلسة"
           title="اختر موضوع الجلسة واستعد للنقاش"
           description="حدد توجه الجلسة، ثم شارك الكود مع الأصدقاء لبدء جمع اللاعبين على نفس الجهاز." 
         />
-        <form onSubmit={handleCreate} className="mt-8 space-y-6">
-          <label className="block text-sm font-medium text-white/80">اختر موضوعًا</label>
-          <div className="grid gap-3 sm:grid-cols-2">
+        <form onSubmit={handleCreate} className="mt-5 space-y-4 sm:mt-8 sm:space-y-6">
+          <label className="block text-xs sm:text-sm font-semibold text-white/80">اختر موضوعًا</label>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             {topics.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => setTopic(option.value)}
-                className={`rounded-3xl border px-4 py-4 text-left text-sm transition ${
+                className={`flex flex-col items-center justify-center text-center rounded-2xl border p-3 transition-all duration-300 ${
                   topic === option.value
-                    ? "border-brand bg-brand/10 text-white"
-                    : "border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:bg-white/10"
+                    ? "border-brand bg-brand/15 text-white scale-[1.02] shadow-lg shadow-brand/10"
+                    : "border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:bg-white/10 hover:scale-[1.01]"
                 }`}
               >
-                <span className="block font-semibold text-white">{option.label}</span>
-                <span className="mt-2 block text-xs text-white/60">وحدة اللعبة المفضلة لك</span>
+                <span className="mb-1">{option.icon}</span>
+                <span className="block font-bold text-xs sm:text-sm text-white">{option.label}</span>
+                <span className="mt-1 block text-[10px] text-white/50 leading-tight hidden xs:block">{option.description}</span>
               </button>
             ))}
           </div>
-          <div className="space-y-3">
-            <p className="text-sm text-white/70">الكود سيُستخدم لإضافة اللاعبين ومتابعة الجلسة.</p>
-            <Button type="submit" disabled={loading || submitted}>
+          <div className="space-y-3 pt-2">
+            <p className="text-xs text-white/60">الكود سيُستخدم لإضافة اللاعبين ومتابعة الجلسة.</p>
+            <Button type="submit" disabled={loading || submitted} className="w-full py-3 text-sm font-bold">
               {loading ? "جارٍ الإنشاء..." : "إنشاء جلسة"}
             </Button>
             {error ? <p className="text-sm text-rose-400">{error}</p> : null}
             {session ? (
-              <p className="text-sm text-white/70">الجلسة الحالية: {session.code}</p>
+              <p className="text-xs sm:text-sm text-white/70 text-center font-medium bg-white/5 py-1.5 rounded-lg border border-white/10">
+                الجلسة الحالية: <span className="font-bold text-brand">{session.code}</span>
+              </p>
             ) : null}
           </div>
         </form>
