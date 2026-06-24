@@ -19,6 +19,11 @@ const playerSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    score: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

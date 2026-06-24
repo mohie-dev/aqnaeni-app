@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { useSession } from "../lib/session-context";
-import { CheckIcon, CrossIcon, ShieldIcon, ArrowRightIcon } from "../components/Icons";
+import { ArrowRightIcon } from "../components/Icons";
 
 export default function ResultsPage() {
   const { currentQuestion, results, loadResults, error } = useSession();
@@ -14,30 +14,44 @@ export default function ResultsPage() {
     }
   }, [currentQuestion, loadResults, results]);
 
+  const roundWinnerName = (() => {
+    if (!results?.voteCounts) return null;
+    let maxVotes = 0;
+    let winnerId = null;
+    for (const [id, count] of Object.entries(results.voteCounts)) {
+      if (count > maxVotes) {
+        maxVotes = count;
+        winnerId = id;
+      }
+    }
+    if (!winnerId) return null;
+    return results.leaderboard?.find(p => p.id === winnerId)?.name || "مجهول";
+  })();
+
+  const maxVotesCount = results?.voteCounts ? Math.max(...Object.values(results.voteCounts), 0) : 0;
+
   return (
     <div className="mx-auto max-w-xl px-2 py-4 sm:px-6 sm:py-8">
       <div className="glass-panel p-5 sm:p-8">
-        <div className="space-y-2">
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-white/50">نتائج التصويت</p>
-          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">ماذا قرر الرفاق المتحيّرون؟</h1>
-          <p className="text-xs leading-relaxed text-white/70">
-            شاهد نتيجة التصويت — ثم اختر المدافع الذي سيجعل الجميع يستمعون (رغم تذمرهم).
-          </p>
+        <div className="space-y-2 text-center">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-white/50">نتائج الجولة</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">الأكثر إقناعاً</h1>
         </div>
 
-        <div className="mt-5 sm:mt-8 grid gap-3 grid-cols-2">
-          <div className="rounded-2xl border border-emerald-500/10 bg-emerald-500/5 p-4 text-center">
-            <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-emerald-400 font-semibold flex items-center justify-center gap-1">
-              <CheckIcon className="w-3.5 h-3.5" /> موافق
-            </p>
-            <p className="mt-1 text-3xl sm:text-5xl font-bold text-emerald-400">{results?.agree ?? 0}</p>
-          </div>
-          <div className="rounded-2xl border border-rose-500/10 bg-rose-500/5 p-4 text-center">
-            <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-rose-400 font-semibold flex items-center justify-center gap-1">
-              <CrossIcon className="w-3.5 h-3.5" /> معارض
-            </p>
-            <p className="mt-1 text-3xl sm:text-5xl font-bold text-rose-400">{results?.disagree ?? 0}</p>
-          </div>
+        <div className="mt-6 sm:mt-8 rounded-2xl border border-brand/20 bg-brand/10 p-6 text-center">
+          {roundWinnerName ? (
+            <>
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-brand/70 font-semibold mb-2">
+                الفائز في هذه الجولة
+              </p>
+              <p className="text-3xl sm:text-5xl font-black text-brand mb-1">{roundWinnerName}</p>
+              <p className="text-xs text-white/70">
+                حصل على {maxVotesCount} صوت
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-white/70">لا يوجد فائز (لم يكتمل التصويت)</p>
+          )}
         </div>
 
         <div className="mt-5 sm:mt-8 rounded-2xl border border-white/10 bg-surfaceCold/80 p-4 sm:p-6">
@@ -47,22 +61,33 @@ export default function ResultsPage() {
               results.votes.map((vote, index) => (
                 <div key={index} className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-xs text-white/80">
                   <span className="font-semibold">{vote.playerName}</span>
-                  <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${vote.vote === "agree" ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"}`}>
-                    {vote.vote === "agree" ? "موافق" : "معارض"}
-                  </span>
+                  <span className="text-white/40 px-2 text-[10px]">صوت لـ</span>
+                  <span className="font-bold text-brand">{vote.votedForName}</span>
                 </div>
               ))
             ) : (
-              <p className="text-xs text-white/50 text-center py-4">لا توجد أصوات بعد — الهدوء قبل العاصفة.</p>
+              <p className="text-xs text-white/50 text-center py-4">لا توجد أصوات بعد.</p>
             )}
           </div>
         </div>
 
+        <div className="mt-5 sm:mt-8 rounded-2xl border border-white/10 bg-surfaceCold/80 p-4 sm:p-6">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-amber-400/50 font-semibold mb-3">لوحة الشرف (Leaderboard)</p>
+          <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+            {results?.leaderboard?.map((player, index) => (
+              <div key={player.id} className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-sm text-white/80">
+                <div className="flex items-center gap-3">
+                  <span className="text-white/40 font-mono text-xs w-4">{index + 1}.</span>
+                  <span className="font-semibold">{player.name}</span>
+                </div>
+                <span className="font-bold text-amber-400">{player.score} <span className="text-[10px] text-amber-400/50">نقطة</span></span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-5 sm:mt-8 flex flex-col gap-2.5">
-          <Button type="button" onClick={() => navigate("/defender")} className="w-full py-3.5 text-sm font-bold bg-brand text-surface hover:bg-brand/90 border-0 flex items-center justify-center gap-2">
-            <ShieldIcon className="w-4 h-4" /> كشف المدافع
-          </Button>
-          <Button type="button" variant="secondary" onClick={() => navigate("/waiting")} className="w-full py-3 text-sm flex items-center justify-center gap-2">
+          <Button type="button" onClick={() => navigate("/waiting")} className="w-full py-3.5 text-sm font-bold bg-brand text-surface hover:bg-brand/90 border-0 flex items-center justify-center gap-2">
             السؤال التالي <ArrowRightIcon className="w-4 h-4" />
           </Button>
         </div>

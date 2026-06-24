@@ -7,6 +7,7 @@ export default function QuestionApprovalPage() {
   const { currentQuestion, session, fetchQuestion, decideQuestion, error } = useSession();
   const navigate = useNavigate();
 
+
   useEffect(() => {
     if (!currentQuestion && session) {
       fetchQuestion().catch(() => null);
@@ -15,7 +16,7 @@ export default function QuestionApprovalPage() {
 
   const handleApprove = async () => {
     await decideQuestion("approve");
-    navigate("/vote");
+    navigate("/stance");
   };
 
   const handleReject = async () => {

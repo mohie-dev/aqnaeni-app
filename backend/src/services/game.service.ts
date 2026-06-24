@@ -1,6 +1,7 @@
 import Session from "../models/session.model.js";
 import Question from "../models/question.model.js";
 import Vote from "../models/vote.model.js";
+import Player from "../models/player.model.js";
 import { toObjectId } from "../utils/helpers.js";
 import { PlayerDecision } from "../utils/enum.js";
 import { PopulatedVote } from "../utils/types.js";
@@ -88,7 +89,7 @@ export const skipQuestion = async (questionId: string) => {
     };
 };
 
-// Calculate results for a question in a session, returning counts of agree/disagree and individual votes
+// Calculate results for a question in a session, returning vote counts and updating scores
 export const calculateResults = async (
     sessionId: string,
     questionId: string
@@ -99,55 +100,46 @@ export const calculateResults = async (
         questionId,
     })
         .populate("playerId", "name")
+        .populate("votedForId", "name")
         .lean();
 
-    let agree = 0;
-    let disagree = 0;
+    const voteCounts: Record<string, number> = {};
+    const detailedVotes = [];
 
     for (const vote of votes) {
-        if (vote.value === PlayerDecision.AGREE) {
-            agree++;
-        } else {
-            disagree++;
+        const votedFor = vote.votedForId as any;
+        const voter = vote.playerId as any;
+
+        if (votedFor && votedFor._id) {
+            const idStr = votedFor._id.toString();
+            voteCounts[idStr] = (voteCounts[idStr] || 0) + 1;
         }
+
+        detailedVotes.push({
+            playerName: voter.name,
+            votedForName: votedFor ? votedFor.name : "Unknown",
+        });
     }
 
-    return {
-        agree,
-        disagree,
-        votes: votes.map((vote: any) => ({
-            playerName: vote.playerId.name,
-            vote: vote.value,
-        })),
-    };
-};
-
-// Pick a random player from the votes who voted opposite to the majority 
-// and assign them as the defender for the next round
-export const pickOppositeDefender = (
-    votes: any[]
-) => {
-
-    if (!votes.length) {
-        return null;
+    // Update scores for each voted player
+    for (const [playerIdStr, count] of Object.entries(voteCounts)) {
+        await Player.findByIdAndUpdate(playerIdStr, {
+            $inc: { score: count },
+        });
     }
 
-    const randomIndex = Math.floor(
-        Math.random() * votes.length
-    );
+    // Get updated leaderboard
+    const players = await Player.find({ sessionId }).sort({ score: -1 }).lean();
 
-    const selectedVote = votes[randomIndex];
-
-    const mustDefend =
-        selectedVote.value === PlayerDecision.AGREE
-            ? PlayerDecision.DISAGREE
-            : PlayerDecision.AGREE;
+    const leaderboard = players.map((p) => ({
+        id: p._id.toString(),
+        name: p.name,
+        score: p.score,
+    }));
 
     return {
-        player: selectedVote.playerId.name,
-
-        originalVote: selectedVote.value,
-
-        mustDefend,
+        votes: detailedVotes,
+        leaderboard,
+        voteCounts, // Optional: if frontend needs raw counts
     };
 };

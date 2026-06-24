@@ -1,12 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type {
-  DefenderData,
   Player,
   Question,
   ResultsData,
   Session,
   Topic,
-  VoteValue,
 } from "./types";
 import * as api from "./api";
 
@@ -15,8 +13,8 @@ interface SessionContextValue {
   players: Player[];
   currentQuestion: Question | null;
   results: ResultsData | null;
-  defender: DefenderData | null;
-  votes: Record<string, VoteValue>;
+  stances: Record<string, string>;
+  votes: Record<string, string>;
   loading: boolean;
   error: string | null;
   createSession: (topic: Topic) => Promise<Session>;
@@ -25,9 +23,10 @@ interface SessionContextValue {
   deletePlayer: (playerId: string) => Promise<void>;
   fetchQuestion: () => Promise<Question>;
   decideQuestion: (decision: "approve" | "reject") => Promise<{ status: string }>;
-  submitVote: (playerId: string, value: VoteValue) => Promise<void>;
+  submitStance: (playerId: string, value: string) => Promise<void>;
+  loadStances: () => Promise<Array<{ playerId: string; playerName: string; value: string }>>;
+  submitVote: (playerId: string, votedForId: string) => Promise<void>;
   loadResults: () => Promise<ResultsData>;
-  loadDefender: () => Promise<DefenderData>;
   resetFlow: () => void;
   setError: (message: string | null) => void;
 }
@@ -39,8 +38,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [results, setResults] = useState<ResultsData | null>(null);
-  const [defender, setDefender] = useState<DefenderData | null>(null);
-  const [votes, setVotes] = useState<Record<string, VoteValue>>({});
+  const [stances, setStances] = useState<Record<string, string>>({});
+  const [votes, setVotes] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +52,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
       setPlayers([]);
       setCurrentQuestion(null);
       setResults(null);
-      setDefender(null);
+      setStances({});
       setVotes({});
       return created;
     } catch (err) {
@@ -128,7 +127,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
       const question = await api.getNextQuestion(session._id);
       setCurrentQuestion(question);
       setResults(null);
-      setDefender(null);
+      setStances({});
       setVotes({});
       return question;
     } catch (err) {
@@ -160,7 +159,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const submitVote = async (playerId: string, value: VoteValue) => {
+  const submitStance = async (playerId: string, value: string) => {
     if (!session || !currentQuestion) {
       throw new Error("Missing current session or question.");
     }
@@ -168,8 +167,49 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setError(null);
     try {
-      await api.submitVote(session._id, currentQuestion._id, playerId, value);
-      setVotes((current) => ({ ...current, [playerId]: value }));
+      await api.submitStance(session._id, currentQuestion._id, playerId, value);
+      setStances((current) => ({ ...current, [playerId]: value }));
+    } catch (err) {
+      setError((err as Error).message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStances = async () => {
+    if (!session || !currentQuestion) {
+      throw new Error("Missing current session or question.");
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const nextStances = await api.getStances(session._id, currentQuestion._id);
+      const stanceMap: Record<string, string> = {};
+      nextStances.forEach((s) => {
+        stanceMap[s.playerId] = s.value;
+      });
+      setStances(stanceMap);
+      return nextStances;
+    } catch (err) {
+      setError((err as Error).message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitVote = async (playerId: string, votedForId: string) => {
+    if (!session || !currentQuestion) {
+      throw new Error("Missing current session or question.");
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      await api.submitVote(session._id, currentQuestion._id, playerId, votedForId);
+      setVotes((current) => ({ ...current, [playerId]: votedForId }));
     } catch (err) {
       setError((err as Error).message);
       throw err;
@@ -197,31 +237,12 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const loadDefender = async () => {
-    if (!session || !currentQuestion) {
-      throw new Error("Missing current session or question.");
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      const nextDefender = await api.getDefender(session._id, currentQuestion._id);
-      setDefender(nextDefender);
-      return nextDefender;
-    } catch (err) {
-      setError((err as Error).message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const resetFlow = () => {
     setSession(null);
     setPlayers([]);
     setCurrentQuestion(null);
     setResults(null);
-    setDefender(null);
+    setStances({});
     setVotes({});
     setLoading(false);
     setError(null);
@@ -232,19 +253,20 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     players,
     currentQuestion,
     results,
-    defender,
+    stances,
     votes,
     loading,
     error,
     createSession,
     addPlayer,
     refreshSession,
+    deletePlayer,
     fetchQuestion,
     decideQuestion,
-    deletePlayer,
+    submitStance,
+    loadStances,
     submitVote,
     loadResults,
-    loadDefender,
     resetFlow,
     setError,
   };

@@ -5,9 +5,10 @@ import CreateSessionPage from "./pages/CreateSessionPage";
 import AddPlayersPage from "./pages/AddPlayersPage";
 import WaitingPage from "./pages/WaitingPage";
 import QuestionApprovalPage from "./pages/QuestionApprovalPage";
+import StancePage from "./pages/StancePage";
+import SpeakingPage from "./pages/SpeakingPage";
 import VotingPage from "./pages/VotingPage";
 import ResultsPage from "./pages/ResultsPage";
-import DefenderRevealPage from "./pages/DefenderRevealPage";
 import AdminQuestionsPage from "./pages/AdminQuestionsPage";
 import Button from "./components/Button";
 
@@ -44,10 +45,11 @@ function Layout({ children }: { children: React.ReactNode }) {
         </div>
       ) : null}
       {loading ? (
-        <div className="pointer-events-none absolute inset-x-0 top-20 z-40 mx-auto flex max-w-6xl justify-center px-4 sm:px-6">
-          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur-xl">
-            جاري الاتصال بالخادم... أحضر فنجان قهوة إذا تأخرنا 
-          </div>
+        <div className="flex flex-col items-center justify-center space-y-4 py-20">
+          <div className="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white/70 text-sm font-medium animate-pulse">
+            جاري التحميل...
+          </p>
         </div>
       ) : null}
       <main className="mx-auto max-w-6xl px-4 pb-6 pt-4 sm:pb-16 sm:pt-6 sm:px-6">
@@ -88,6 +90,14 @@ function AppRoutes() {
         element={session ? <QuestionApprovalPage /> : <Navigate to="/create" replace />}
       />
       <Route
+        path="/stance"
+        element={session ? <StancePage /> : <Navigate to="/create" replace />}
+      />
+      <Route
+        path="/speaking"
+        element={session ? <SpeakingPage /> : <Navigate to="/create" replace />}
+      />
+      <Route
         path="/vote"
         element={session ? <VotingPage /> : <Navigate to="/create" replace />}
       />
@@ -96,8 +106,8 @@ function AppRoutes() {
         element={session ? <ResultsPage /> : <Navigate to="/create" replace />}
       />
       <Route
-        path="/defender"
-        element={session ? <DefenderRevealPage /> : <Navigate to="/create" replace />}
+        path="/speaking"
+        element={session ? <SpeakingPage /> : <Navigate to="/create" replace />}
       />
       <Route
         path="/admin/:adminSecret"

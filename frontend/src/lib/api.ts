@@ -1,12 +1,10 @@
 import type {
-  DefenderData,
   Player,
   Question,
   QuestionFormData,
   ResultsData,
   Session,
   Topic,
-  VoteValue,
 } from "./types";
 
 const API_BASE = "https://aqnaeni-app.onrender.com/api";
@@ -94,12 +92,12 @@ export const submitVote = async (
   sessionId: string,
   questionId: string,
   playerId: string,
-  value: VoteValue
+  votedForId: string
 ) => {
   const response = await fetch(`${API_BASE}/votes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, questionId, playerId, value }),
+    body: JSON.stringify({ sessionId, questionId, playerId, votedForId }),
   });
 
   return handleResponse(response);
@@ -108,11 +106,6 @@ export const submitVote = async (
 export const getResults = async (sessionId: string, questionId: string) => {
   const response = await fetch(`${API_BASE}/votes/results/${sessionId}/${questionId}`);
   return handleResponse<ResultsData>(response);
-};
-
-export const getDefender = async (sessionId: string, questionId: string) => {
-  const response = await fetch(`${API_BASE}/votes/defender/${sessionId}/${questionId}`);
-  return handleResponse<DefenderData>(response);
 };
 
 export const getQuestions = async (topic?: Topic) => {
@@ -137,6 +130,26 @@ export const updateQuestion = async (id: string, question: QuestionFormData) => 
     body: JSON.stringify(question),
   });
   return handleResponse<Question>(response);
+};
+
+export const submitStance = async (
+  sessionId: string,
+  questionId: string,
+  playerId: string,
+  value: string
+) => {
+  const response = await fetch(`${API_BASE}/stances`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId, questionId, playerId, value }),
+  });
+
+  return handleResponse(response);
+};
+
+export const getStances = async (sessionId: string, questionId: string) => {
+  const response = await fetch(`${API_BASE}/stances/${sessionId}/${questionId}`);
+  return handleResponse<Array<{ playerId: string; playerName: string; value: string }>>(response);
 };
 
 export const deleteQuestion = async (id: string) => {

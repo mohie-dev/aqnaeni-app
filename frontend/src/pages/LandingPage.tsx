@@ -61,14 +61,14 @@ export default function LandingPage() {
             <div className="space-y-4">
               <div className="rounded-3xl bg-white/5 p-5 shadow-glow">
                 <p className="text-xs uppercase tracking-[0.24em] text-white/40">لقطة الشاشة</p>
-                <p className="mt-3 text-lg font-semibold text-white">سؤال جديد: هل يجب أن تتغير معايير العلاقات بعد الـ30؟</p>
+                <p className="mt-3 text-lg font-semibold text-white">مع ام ضد: الصحاب الولاد والبنات ينفع يبقوا مجرد صحاب</p>
                 <div className="mt-6 space-y-3 rounded-3xl bg-surfaceSoft p-4">
                   <div className="flex items-center justify-between text-sm text-white/60">
                     <span>السيناريو</span>
                     <span>جلسة أصدقاء</span>
                   </div>
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
-                    "هل تفضّل أن يتغير صديقك المقرب بعد دخوله لعلاقة جدية؟"
+                    قعده مع صحابك وبتتكلموا في العلاقات و جاب سيره الصحوبيه بين الولدو البنت 
                   </div>
                 </div>
               </div>

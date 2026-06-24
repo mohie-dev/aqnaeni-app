@@ -6,13 +6,14 @@ export type Topic =
   | "relationships"
   | "gym";
 
-export type VoteValue = "agree" | "disagree";
-
 export type QuestionStatus = "idle" | "pending" | "approved" | "rejected";
+
+export type StanceValue = "agree" | "disagree";
 
 export interface Player {
   _id: string;
   name: string;
+  score: number;
 }
 
 export interface Session {
@@ -33,15 +34,9 @@ export interface Question {
 }
 
 export interface ResultsData {
-  agree: number;
-  disagree: number;
-  votes: Array<{ playerName: string; vote: VoteValue }>;
-}
-
-export interface DefenderData {
-  player: string;
-  originalVote: VoteValue;
-  mustDefend: VoteValue;
+  leaderboard: { id: string; name: string; score: number }[];
+  votes: Array<{ playerName: string; votedForName: string }>;
+  voteCounts: Record<string, number>;
 }
 
 export interface QuestionFormData {

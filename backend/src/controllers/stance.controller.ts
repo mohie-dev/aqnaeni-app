@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import Vote from "../models/vote.model.js";
-import { calculateResults } from "../services/game.service.js";
+import Stance from "../models/stance.model.js";
+import { PlayerDecision } from "../utils/enum.js";
 
-// Submit a vote for a question in a session
-export const submitVote = async (
+// Submit a stance for a question in a session
+export const submitStance = async (
     req: Request,
     res: Response
 ) => {
@@ -12,46 +12,46 @@ export const submitVote = async (
             sessionId,
             questionId,
             playerId,
-            votedForId,
+            value,
         } = req.body;
 
-        if (!sessionId || !questionId || !playerId || !votedForId) {
+        if (!sessionId || !questionId || !playerId || !value) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields",
             });
         }
 
-        if (playerId === votedForId) {
+        if (!Object.values(PlayerDecision).includes(value)) {
             return res.status(400).json({
                 success: false,
-                message: "Player cannot vote for themselves",
+                message: "Invalid stance value",
             });
         }
 
-        const existingVote = await Vote.findOne({
+        const existingStance = await Stance.findOne({
             sessionId,
             questionId,
             playerId,
         });
 
-        if (existingVote) {
+        if (existingStance) {
             return res.status(400).json({
                 success: false,
-                message: "Player already voted",
+                message: "Player already submitted a stance",
             });
         }
 
-        const vote = await Vote.create({
+        const stance = await Stance.create({
             sessionId,
             questionId,
             playerId,
-            votedForId,
+            value,
         });
 
         return res.status(201).json({
             success: true,
-            data: vote,
+            data: stance,
         });
 
     } catch (err: any) {
@@ -62,16 +62,14 @@ export const submitVote = async (
     }
 };
 
-// Get results for a question in a session, returning counts of votes and updating scores
-export const getResults = async (
+// Get stances for a question in a session
+export const getStances = async (
     req: Request,
     res: Response
 ) => {
     try {
-
         const { sessionId, questionId } = req.params;
 
-        // Validation to ensure sessionId and questionId are valid strings
         if (!sessionId || !questionId || typeof sessionId !== 'string' || typeof questionId !== 'string') {
             return res.status(400).json({
                 success: false,
@@ -79,14 +77,22 @@ export const getResults = async (
             });
         }
 
-        const results = await calculateResults(
+        const stances = await Stance.find({
             sessionId,
-            questionId
-        );
+            questionId,
+        })
+        .populate("playerId", "name")
+        .lean();
+
+        const formattedStances = stances.map((s: any) => ({
+            playerId: s.playerId._id.toString(),
+            playerName: s.playerId.name,
+            value: s.value,
+        }));
 
         return res.json({
             success: true,
-            data: results,
+            data: formattedStances,
         });
 
     } catch (err: any) {

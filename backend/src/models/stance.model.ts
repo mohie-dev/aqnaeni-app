@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { PlayerDecision } from "../utils/enum.js";
 
-const voteSchema = new mongoose.Schema(
+const stanceSchema = new mongoose.Schema(
   {
     sessionId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,18 +23,18 @@ const voteSchema = new mongoose.Schema(
       required: true,
     },
 
-    votedForId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Player",
+    value: {
+      type: String,
+      enum: Object.values(PlayerDecision),
       required: true,
     },
   },
   { timestamps: true }
 );
 
-voteSchema.index(
+stanceSchema.index(
   { sessionId: 1, questionId: 1, playerId: 1 },
   { unique: true }
 );
 
-export default mongoose.model("Vote", voteSchema);
+export default mongoose.model("Stance", stanceSchema);
