@@ -3,8 +3,6 @@ import Question from "../models/question.model.js";
 import Vote from "../models/vote.model.js";
 import Player from "../models/player.model.js";
 import { toObjectId } from "../utils/helpers.js";
-import { PlayerDecision } from "../utils/enum.js";
-import { PopulatedVote } from "../utils/types.js";
 
 // Fetch a random question for the session's topic, excluding already used questions
 export const getPreviewQuestion = async (

@@ -29,9 +29,9 @@ export default function AddPlayersPage() {
       <div className="glass-panel p-5 sm:p-8">
         <div className="space-y-2">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-white/50">إضافة أصدقاء</p>
-          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">شارك الكود وجمع اللاعبين</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">ضيف الأصدقاء</h1>
           <p className="text-xs sm:text-sm leading-relaxed sm:leading-7 text-white/70">
-            أدخل أسماء الأصدقاء واحدًا تلو الآخر، واقرأ الكود ليستخدمه الجميع عند الانضمام إلى الجلسة.
+            أدخل أسماء الأصدقاء واحدًا تلو الآخر.
           </p>
         </div>
         <div className="mt-5 sm:mt-8 rounded-2xl border border-white/10 bg-surfaceCold/80 p-4 sm:p-6">
@@ -103,11 +103,11 @@ export default function AddPlayersPage() {
         </div>
 
         <div className="mt-5 sm:mt-8 flex flex-col gap-2.5">
-          <Button type="button" onClick={() => navigate("/waiting")} disabled={players.length < 2} className="w-full py-3.5 text-sm font-bold">
+          <Button type="button" onClick={() => navigate("/waiting")} disabled={players.length < 3} className="w-full py-3.5 text-sm font-bold">
             بدء الجلسة
           </Button>
           <p className="text-[10px] sm:text-xs text-white/50 text-center leading-normal">
-            نحتاج لاعبين اثنين على الأقل لبدء اللعبة.
+            نحتاج ثلاثة لاعبين على الأقل لبدء اللعبة.
           </p>
         </div>
       </div>

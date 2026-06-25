@@ -15,11 +15,12 @@ export default function WaitingPage() {
 
   return (
     <div className="mx-auto max-w-xl px-2 py-4 sm:px-6 sm:py-8">
-      <div className="glass-panel p-5 sm:p-8">
+      <div className="glass-panel p-5 sm:p-8 relative">
         <h1 className="text-xl sm:text-3xl font-bold text-white">جاهز للبدء</h1>
         <p className="mt-2 text-xs sm:text-sm leading-relaxed sm:leading-7 text-white/70">
           عندما يكون العدد كافياً، استعرض السؤال الأول وقرّر مع المجموعة إذا كان يستحق النقاش.
         </p>
+        
         <div className="mt-5 sm:mt-8 rounded-2xl border border-white/10 bg-surfaceCold/80 p-4 sm:p-6">
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
@@ -31,13 +32,25 @@ export default function WaitingPage() {
             </div>
           </div>
         </div>
+        
         <div className="mt-5 sm:mt-8 flex flex-col gap-3">
           <Button type="button" onClick={fetchQuestion} className="w-full py-3.5 text-sm font-bold">
             طلب سؤال جديد
           </Button>
-          <p className="text-[10px] sm:text-xs text-white/50 text-center leading-normal">إذا كنت تريد تغيير السؤال قبل التصويت، يمكنك طلب سؤال آخر.</p>
+          <p className="text-[10px] sm:text-xs text-white/50 text-center leading-normal mt-2">إذا كنت تريد تغيير السؤال قبل التصويت، يمكنك طلب سؤال آخر.</p>
         </div>
+
         {error ? <p className="mt-4 text-xs sm:text-sm text-rose-400">{error}</p> : null}
+
+        <div className="mt-6 flex justify-end">
+          <button 
+            type="button" 
+            onClick={() => navigate("/players")} 
+            className="text-[10px] sm:text-xs text-white/40 hover:text-white/80 transition-colors underline underline-offset-4"
+          >
+            تعديل الأسماء
+          </button>
+        </div>
       </div>
     </div>
   );

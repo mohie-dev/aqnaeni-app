@@ -29,7 +29,7 @@ export default function QuestionApprovalPage() {
       <div className="glass-panel p-5 sm:p-8">
         <div className="space-y-2">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.32em] text-white/50">سؤال للمراجعة</p>
-          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">هل هذا سؤال يستحق النقاش؟</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-white leading-tight">مع ام ضد</h1>
           <p className="text-xs leading-relaxed text-white/70">
             اقرأ السؤال مع المجموعة. إذا كان جيدًا، تابع للتصويت. إذا أردتم سؤالًا أكثر حدة، اختر تخطي.
           </p>

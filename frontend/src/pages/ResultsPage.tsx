@@ -14,21 +14,17 @@ export default function ResultsPage() {
     }
   }, [currentQuestion, loadResults, results]);
 
-  const roundWinnerName = (() => {
-    if (!results?.voteCounts) return null;
-    let maxVotes = 0;
-    let winnerId = null;
-    for (const [id, count] of Object.entries(results.voteCounts)) {
-      if (count > maxVotes) {
-        maxVotes = count;
-        winnerId = id;
-      }
-    }
-    if (!winnerId) return null;
-    return results.leaderboard?.find(p => p.id === winnerId)?.name || "مجهول";
-  })();
-
   const maxVotesCount = results?.voteCounts ? Math.max(...Object.values(results.voteCounts), 0) : 0;
+
+  const roundWinnerNames = (() => {
+    if (!results?.voteCounts || maxVotesCount === 0) return [];
+    
+    const winnerIds = Object.entries(results.voteCounts)
+      .filter(([id, count]) => count === maxVotesCount)
+      .map(([id]) => id);
+
+    return winnerIds.map(id => results.leaderboard?.find(p => p.id === id)?.name || "مجهول");
+  })();
 
   return (
     <div className="mx-auto max-w-xl px-2 py-4 sm:px-6 sm:py-8">
@@ -39,14 +35,16 @@ export default function ResultsPage() {
         </div>
 
         <div className="mt-6 sm:mt-8 rounded-2xl border border-brand/20 bg-brand/10 p-6 text-center">
-          {roundWinnerName ? (
+          {roundWinnerNames.length > 0 ? (
             <>
               <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-brand/70 font-semibold mb-2">
-                الفائز في هذه الجولة
+                {roundWinnerNames.length > 1 ? "الفائزون في هذه الجولة" : "الفائز في هذه الجولة"}
               </p>
-              <p className="text-3xl sm:text-5xl font-black text-brand mb-1">{roundWinnerName}</p>
+              <p className="text-3xl sm:text-5xl font-black text-brand mb-1 leading-snug">
+                {roundWinnerNames.join(" و ")}
+              </p>
               <p className="text-xs text-white/70">
-                حصل على {maxVotesCount} صوت
+                {roundWinnerNames.length > 1 ? "حصل كل منهم على" : "حصل على"} {maxVotesCount} {maxVotesCount === 1 ? "صوت" : "أصوات"}
               </p>
             </>
           ) : (
